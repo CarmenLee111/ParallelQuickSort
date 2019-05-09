@@ -16,16 +16,19 @@ int main(int argc, char *argv[]) {
     time_t t;
 
     srand( (unsigned) time(&t));
-    fp = fopen("input", "w");
+    fp = fopen("input.txt", "w");
     printf("Generate %d random numbers with max value %d\n", n, x);
     int i, d;
-    fwrite(&n, sizeof(int), 1, fp);
+    fprintf(fp, "%d ", n);
+
+    // fwrite(&n, sizeof(int), 1, fp);
     for (i=0; i<n; i++) {
         d = (int) (rand()%x);
-        printf("%d ", d);
-        fwrite(&d, sizeof(int), 1, fp);
+//     dd   printf("%d ", d);
+//        fwrite(&d, sizeof(int), 1, fp);
+        fprintf(fp, "%d ", d);
     }
-    printf("\n");
+//    printf("\n");
     fclose(fp);
     return 0;
 }

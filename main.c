@@ -53,7 +53,6 @@ int main(int argc, char *argv[]) {
   int sub_rank, sub_size;                  /* IDs for the next level comm */
 
   d = log2(size);                           
-  t = MPI_Wtime() - starttime;
 
   if (rank == 0) {
     /* Loading the input file into l */
@@ -121,8 +120,6 @@ int main(int argc, char *argv[]) {
     /* Splitting local arr */
     pos = parti(local_arr, chunk, pvt);
     right = chunk - pos;
-    //lo = realloc(lo, pos  );
-    //hi = realloc(hi, right);
     lo = malloc(sizeof(int) * pos);
     hi = malloc(sizeof(int) * right);
     for (i=0; i<pos  ; i++) lo[i] = local_arr[i];
@@ -180,68 +177,73 @@ int main(int argc, char *argv[]) {
       rev_displs[i+1] = acc; 
   }
 	
-  //if (rank==0) {
-  //  printf("The receive count array: ------------------- ");
-  //  print_arr(rev_counts, size);
-  //  printf("The receive displ arrya: ------------------- ");
-  //  print_arr(rev_displs, size); 
-  //}
+  if (rank==0) {
+    printf("The receive count array: ------------------- ");
+    print_arr(rev_counts, size);
+    printf("The receive displ arrya: ------------------- ");
+    print_arr(rev_displs, size); 
+  }
 
   MPI_Gatherv(local_arr, chunk, MPI_INT, arr, rev_counts, rev_displs, MPI_INT, 0, MPI_COMM_WORLD);
  
   /* ----------------------------------------------------------------- */
   MPI_Barrier(MPI_COMM_WORLD);  
 
+  t = MPI_Wtime() - starttime;
+  
+
   /* Inspect the output */
   if (rank==0) {
+    printf("Wall time: %f\n", t);
     //printf("\n");
     //printf("The moment of the fucking truth: --------------------------- \n");
     //print_arr(arr, n);
     //print_arr(arr2, n);
     //printf("------------------------------------------------------------ \n ");
     int comp = compare_arr(arr, arr2, n);
-    printf((comp==1)? "******** The result is correct *********\n":"NOOO!!!\n");
+    printf((comp==1)? "******** The result is correct *********\n\n":"NOOO!!!\n\n");
     
     /* Write to output */ 
     write_output(n, arr, outputfile);
+    free(arr);
   }
 
-
-  //   /* Free the arr */
-  // if (rank==0) {
-  //   //free(arr);
-  // }
-  // free(local_arr);
-
-
-
-
+  /* Free the sub arr */
+  free(local_arr);
 
   MPI_Comm_free(&n_comm);
-  MPI_Finalize(); /* Shut down and clean up MPI */
-  
+  MPI_Finalize();                  /* Shut down and clean up MPI */
 
   return 0;
 }
 
 /* Load array */
 int load_input(int** l, char *filename) {
-  FILE *fp = fopen(filename, "rb");
+  FILE *fp = fopen(filename, "r");
   int n;
   if (!fp) {
     printf("load_data error: failed to open input file '%s'.\n", filename);
     return -1;
   }
-  fread(&n, sizeof(int), 1, fp);
+//  fread(&n, sizeof(int), 1, fp);
+  fscanf(fp, "%d", &n);
   *l = malloc(sizeof(int) * n);
-  fread(*l, sizeof(int), n, fp);
+  int i;
+  for (i=0; i<n; i++) {
+      fscanf(fp, "%d", &((*l)[i]));
+  }
+//  fread(*l, sizeof(int), n, fp);
   fclose(fp);
   return n;
 }
 
 void write_output(int n, int* l, char* filename) {
-  FILE *fp = fopen(filename, "wb");
-  fwrite(l, sizeof(int), n, fp);
+  FILE *fp = fopen(filename, "w");
+  int i;
+  for (i=0; i<n; i++) {
+      fprintf(fp, "%d ", l[i]);
+  }
+//  fwrite(l, sizeof(int), n, fp);
   fclose(fp);
 }
 
@@ -315,6 +317,7 @@ int cmpfunc (const void * a, const void * b) {
    return ( *(int*)a - *(int*)b );
 }
 
+/* Merging two arrays in ascending order */
 int * merge(int *v1, int n1, int *v2, int n2)
 {
 	int i,j,k;
