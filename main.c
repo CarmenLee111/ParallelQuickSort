@@ -204,8 +204,8 @@ int main(int argc, char *argv[]) {
     /* WALL TIME */
     printf("%f\n", t);
     
-    /* Write to output */ 
-    write_output(n, arr, outputfile);
+    /* Write to output (ommitted for measuring time) */ 
+    //write_output(n, arr, outputfile);
     free(arr);
   }
 
