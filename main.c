@@ -14,11 +14,12 @@ int median (int arr[], int n);
 int cmpfunc (const void * a, const void * b);
 int * merge(int *v1, int n1, int *v2, int n2);
 void print_arr(int* arr, int n);
+int compare_arr(int *a, int *b, int n);
 
 int main(int argc, char *argv[]) {
 
   if (argc != 4) {
-    printf("Usage: ./sort <inputfilename> <outputfilename> <option> \n");
+    printf("Usage: ./quicksort <inputfilename> <outputfilename> <option> \n");
   } 
 
   /* Retrieve the arguments */
@@ -64,9 +65,9 @@ int main(int argc, char *argv[]) {
     quicksort(arr2, 0, n-1);
 
     /* Print the initial states */
-    printf("Hypercube dimension: %d----------------------------\n", d);
-    printf("n: %d\n-----------------------\n", n);
-    print_arr(arr, n);
+    printf("Hypercube dimension: %d\n", d);
+    printf("Number of elements to sort: %d\n----------------------------------------------------------\n", n);
+    //print_arr(arr, n);
   }
 
   /* Telling the global slaves how large (n) the array is */
@@ -79,8 +80,8 @@ int main(int argc, char *argv[]) {
   int *local_arr = malloc(sizeof(int)*chunk);
   MPI_Scatter(arr, chunk, MPI_INT, local_arr, chunk, MPI_INT, 0, MPI_COMM_WORLD);
   qsort(local_arr, chunk, sizeof(int), cmpfunc);
-  printf("Rank %d received and sorted: ", rank);
-  print_arr(local_arr, chunk);
+  //printf("Rank %d received and sorted: ", rank);
+  //print_arr(local_arr, chunk);
   
   /* Bunch of local variables */
   int pos;            /* position of pvt, also length of left arr */ 
@@ -100,19 +101,19 @@ int main(int argc, char *argv[]) {
 
   /* looping through the hypercube dimensions */
   for (k=d-1; k>=0; k--) {
-    if (rank==0) printf("The dimension is %d ------------------#### \n", k);
+    //if (rank==0) printf("The dimension is %d ------------------#### \n", k);
     /* ID of the partner in crime in the comm */
     partner = sub_rank ^ ((int) pow(2,k));
 
-    printf("Rank: %d/%d \t SUB Rank: %d/%d \t SUB Color: %d\n",
-	rank, size, sub_rank, sub_size, color);
+    //printf("Rank: %d/%d \t SUB Rank: %d/%d \t SUB Color: %d\n",
+    //	rank, size, sub_rank, sub_size, color);
     /* Sub master determine the pivot */
     if (sub_rank == 0)
       pvt = median(local_arr, chunk);
 
     /* Broadcast to sub slaves */
     MPI_Bcast(&pvt, 1, MPI_INT, 0, n_comm);
-    printf("Pivot in %d is %d\n", sub_rank, pvt);
+    //printf("Pivot in %d is %d\n", sub_rank, pvt);
 
     /* ----------------------------------------------------------------- */
     MPI_Barrier(n_comm);
@@ -144,8 +145,8 @@ int main(int argc, char *argv[]) {
     /* ----------------------------------------------------------------- */
     MPI_Barrier(n_comm);
 
-    printf("Rank %d received the package: ", sub_rank);
-    print_arr(tmp, package_size);
+    //printf("Rank %d received the package: ", sub_rank);
+    //print_arr(tmp, package_size);
 
     /* merge package and the rest of the arr to keep */
     if (sub_rank < partner) {
@@ -155,8 +156,8 @@ int main(int argc, char *argv[]) {
       chunk = right + package_size; 
       local_arr = merge(hi, right, tmp, package_size);
     }
-    printf("Global rank %d, New local array size %d and they are: ----------------- ", rank, chunk);
-    print_arr(local_arr, chunk);
+    //printf("Global rank %d, New local array size %d and they are: ----------------- ", rank, chunk);
+    //print_arr(local_arr, chunk);
 
     MPI_Barrier(n_comm);
 
@@ -179,12 +180,12 @@ int main(int argc, char *argv[]) {
       rev_displs[i+1] = acc; 
   }
 	
-  if (rank==0) {
-    printf("The receive count array: ------------------- ");
-    print_arr(rev_counts, size);
-    printf("The receive displ arrya: ------------------- ");
-    print_arr(rev_displs, size); 
-  }
+  //if (rank==0) {
+  //  printf("The receive count array: ------------------- ");
+  //  print_arr(rev_counts, size);
+  //  printf("The receive displ arrya: ------------------- ");
+  //  print_arr(rev_displs, size); 
+  //}
 
   MPI_Gatherv(local_arr, chunk, MPI_INT, arr, rev_counts, rev_displs, MPI_INT, 0, MPI_COMM_WORLD);
  
@@ -193,15 +194,18 @@ int main(int argc, char *argv[]) {
 
   /* Inspect the output */
   if (rank==0) {
-    printf("\n");
-    printf("The moment of the fucking truth: --------------------------- \n");
-    print_arr(arr, n);
-    print_arr(arr2, n);
-    printf("------------------------------------------------------------ \n ");
+    //printf("\n");
+    //printf("The moment of the fucking truth: --------------------------- \n");
+    //print_arr(arr, n);
+    //print_arr(arr2, n);
+    //printf("------------------------------------------------------------ \n ");
+    int comp = compare_arr(arr, arr2, n);
+    printf((comp==1)? "******** The result is correct *********\n":"NOOO!!!\n");
     
     /* Write to output */ 
     write_output(n, arr, outputfile);
   }
+
 
   //   /* Free the arr */
   // if (rank==0) {
@@ -349,6 +353,7 @@ int * merge(int *v1, int n1, int *v2, int n2)
 	return result;
 }
 
+/* utility function printing out arr */
 void print_arr(int* arr, int n) {
   int i;
   for (i=0; i<n; i++) {
@@ -356,3 +361,14 @@ void print_arr(int* arr, int n) {
   }
   printf("\n");
 }
+
+
+/* utility function comparing two arrays */
+int compare_arr(int *a, int *b, int n) {
+   int i;
+   for (i=0; i<n; i++) {
+      if (a[i] != b[i]) return 0;
+   }
+   return 1;
+}
+
