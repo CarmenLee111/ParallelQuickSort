@@ -11,6 +11,7 @@ int partition (int arr[], int lo, int hi);
 void quicksort(int *arr, int lo, int hi);
 int parti (int arr[], int n, int pvt);
 int median (int arr[], int n);
+int mean (int arr[], int n);
 int cmpfunc (const void * a, const void * b);
 int * merge(int *v1, int n1, int *v2, int n2);
 void print_arr(int* arr, int n);
@@ -97,9 +98,36 @@ int main(int argc, char *argv[]) {
     /* ID of the partner in crime in the comm */
     partner = sub_rank ^ ((int) pow(2,k));
 
-    /* Sub master determine the pivot */
-    if (sub_rank == 0)
-      pvt = median(local_arr, chunk);
+    switch (opt) {
+      	/* Sub master determine the pivot */
+      	case 1: {
+      		if (sub_rank == 0){
+      			pvt = median(local_arr, chunk);
+      		}
+			break;
+		} 
+		/* Median of medians */
+		case 2: {
+			pvt = median(local_arr, chunk);
+			int pvt_arr[sub_size];
+			MPI_Gather(&pvt, 1, MPI_INT, pvt_arr, 1, MPI_INT, 0, n_comm);
+			if (sub_rank == 0) {
+				pvt = median(pvt_arr, sub_size);
+			}
+			break;
+		}
+		/* Mean of medians */
+		case 3: {
+			pvt = median(local_arr, chunk);
+			int pvt_arr[sub_size];
+			MPI_Gather(&pvt, 1, MPI_INT, pvt_arr, 1, MPI_INT, 0, n_comm);
+			if (sub_rank == 0) {
+				pvt = mean(pvt_arr, sub_size);
+			}
+			break;
+		}
+
+    }
 
     /* Broadcast to sub slaves */
     MPI_Bcast(&pvt, 1, MPI_INT, 0, n_comm);
@@ -282,6 +310,16 @@ int median (int arr[], int n) {
   }
 }
 
+/* Return the mean of an array of length n */
+int mean (int arr[], int n) {
+	if (n==0) return 0;   /* Set zero as mean if encounters an empty set */
+	int i, sum;
+	for (i=0; i<n; i++) {
+		sum += arr[i];
+	}
+	return sum/n;
+}
+
 
 /* Utility function for qsort() */
 int cmpfunc (const void * a, const void * b) {
@@ -345,4 +383,5 @@ int compare_arr(int *a, int *b, int n) {
    }
    return 1;
 }
+
 
