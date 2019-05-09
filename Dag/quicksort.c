@@ -6,6 +6,7 @@
 #include <sys/time.h>
 
 #define MASTER 0 
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 int arrSize;
 int depth = 1;
@@ -20,8 +21,8 @@ void globalsort(int pivotStrat, int rank, int groupSize, int *subArray, int subA
     int interval;
     int *arrayTotal;
     MPI_Status status;
+
     qsort(subArray, subArrayLength, sizeof(int), cmpfunc); //local sort
-    //printf("2 %d\n",groupSize);
     if (groupSize == 1){
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &groupSize);
@@ -38,21 +39,29 @@ void globalsort(int pivotStrat, int rank, int groupSize, int *subArray, int subA
             for(int j = 0; j < arrSize; j++){
                 printf("%d\n",sortedArray[j]);
             }
+            printf("%d numbers\n",arrSize);
         }
         return;
     }
     if (pivotStrat == 1){
         if (subArrayLength%2 == 0){
-            pivot = subArray[subArrayLength/2]; 
+            if (subArrayLength == 0){
+                pivot = subArray[subArrayLength/2]; 
+            } else {
+                pivot = 0;
+            }
         } else {
             pivot = (double)(subArray[subArrayLength/2] + subArray[1 + subArrayLength/2])/2;
         }
         MPI_Bcast(&pivot, 1, MPI_DOUBLE, groupSize - 1, commLocal); //brodcast pivot in subgroup
     }
-    while(subArray[i] < pivot){
+    while(i < subArrayLength && subArray[i] < pivot){
         i++;
     }
     int *arrayLarger = &subArray[i]; //split data
+    
+    MPI_Barrier(MPI_COMM_WORLD);
+    MPI_Barrier(commLocal);
     if (rank/((groupSize/2)) == 0) {
         MPI_Send(arrayLarger, subArrayLength - i, MPI_INT, (groupSize/2) + rank, rank, commLocal); //sending part
 
@@ -80,9 +89,10 @@ void globalsort(int pivotStrat, int rank, int groupSize, int *subArray, int subA
         memcpy(arrayTotal, arrayLarger, (subArrayLength - i) * sizeof(int)); 
         memcpy(arrayTotal + (subArrayLength - i), arrayLargerInc, incommingSize * sizeof(int));
     }
+    MPI_Barrier(commLocal);
     int glRank;
     MPI_Comm_rank(MPI_COMM_WORLD, &glRank);
-    int color = rank/(groupSize/2);//rank%2; //create subgroup communication
+    int color = rank/(groupSize/2); //create subgroup communication
     MPI_Comm_split(commLocal, color, rank, &commLocal);
     
     MPI_Comm_size(commLocal, &groupSize); 
@@ -109,7 +119,6 @@ int main(int argc, char *argv[]) {
     char *filenameOutput = strdup(argv[2]);
     const int pivotStrat = atoi(argv[3]);
     
-
     FILE *fp;
     fp = fopen(filenameInput, "r");
     if (!fp){                           
@@ -126,16 +135,21 @@ int main(int argc, char *argv[]) {
     }
 
     int initialInterval = arrSize/size; //TODO account for residual
+    int residual = arrSize%size;
+    int initialIntervalRes = initialInterval;
+    if (rank < residual){
+        initialIntervalRes += 1;
+    }
 
-    int *subArray = (int*)malloc(initialInterval * sizeof(int)); //divide into local datasets
-    memcpy(subArray, &array[rank*initialInterval], initialInterval*sizeof(*array));
-
+    int *subArray = (int*)malloc(initialIntervalRes * sizeof(int)); //divide into local datasets
+    //printf("Init %d, length %d, rank%d\n",rank*initialInterval + MIN(residual, rank),initialIntervalRes, rank);
+    memcpy(subArray, &array[rank*initialInterval + MIN(residual, rank)], initialIntervalRes*sizeof(*array));
     int color = 0; //create subgroup communication
     MPI_Comm commLocal;
     MPI_Comm_split(MPI_COMM_WORLD, color, rank, &commLocal);
 
     
-    globalsort(pivotStrat, rank, size, subArray, initialInterval, commLocal); //call globalsort
+    globalsort(pivotStrat, rank, size, subArray, initialIntervalRes, commLocal); //call globalsort
     
 
     MPI_Finalize(); /* Shut down and clean up MPI */

@@ -6,7 +6,7 @@
 int main(int argc, char const *argv[])
 { 
     srand(time(NULL)); 
-    int N = 500;
+    int N = 1000;
     FILE *fp;
     fp = fopen("arr","w");
     if (!fp){                           
