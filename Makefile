@@ -2,7 +2,7 @@ cc = mpicc
 CCFLAGS =
 LIBS = -lm
 
-BINS = quicksort
+BINS = quicksort validate
 
 all: $(BINS)
 
