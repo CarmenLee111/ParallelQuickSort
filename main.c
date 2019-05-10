@@ -34,7 +34,8 @@ int main(int argc, char *argv[]) {
   int d;                        /* dimension of the hypercube */
   int chunk;                    /* Amount of work each processor will do */
   int* arr;
-  int pvt;                     
+  int pvt = 0;                     
+  int pivot = 0;
   int color;                   
   double starttime, t;
   int* arr2;                    /* copy of the array for later comparison */
@@ -59,7 +60,9 @@ int main(int argc, char *argv[]) {
   if (rank == 0) {
     /* Loading the input file into l */
     n = load_input(&arr2, inputfile);      /* return length of the arr to be sorted */
-	pad = n%size;
+	printf("n: %d\n", n);
+	pad = (n%size != 0) ? (size - n%size): n/size;
+    printf("Padding size: %d\n", pad); 
     arr = malloc(sizeof(int)*(n+pad));
     for (i=0; i<n; i++) {
       arr[i] = arr2[i];
@@ -69,25 +72,32 @@ int main(int argc, char *argv[]) {
 	}
 	free(arr2);
   //  quicksort(arr2, 0, n-1);
+    chunk  = (n+pad)/size; 
 
   }
 
+  //chunk  = (n+pad)/size; 
+
   /* Telling the global slaves how large (n) the array is */
-  MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Bcast(&chunk, 1, MPI_INT, 0, MPI_COMM_WORLD);
   /* ----------------------------------------------------------------- */
   MPI_Barrier(MPI_COMM_WORLD);
 
   /* Send data to local arrays and reorder */
-  chunk  = ceil(n/size); 
+  //chunk  = (n+pad)/size; 
   printf("The chunk for Rank %d is %d ------------\n", rank, chunk);
   int *local_arr = malloc(sizeof(int)*chunk);
   MPI_Scatter(arr, chunk, MPI_INT, local_arr, chunk, MPI_INT, 0, MPI_COMM_WORLD);
+  /* ----------------------------------------------------------------- */
+  MPI_Barrier(MPI_COMM_WORLD);
   /* remove padding */
   if (rank == size-1) {
 	chunk = chunk - pad;
   }
   qsort(local_arr, chunk, sizeof(int), cmpfunc);
   
+  printf("Rank %d has local array ------\n", rank);
+  print_arr(local_arr, chunk);
   /* Bunch of local variables */
   int pos;            /* position of pvt, also length of left arr */ 
   int right;          /* length of right arr */
@@ -108,12 +118,17 @@ int main(int argc, char *argv[]) {
   for (k=d-1; k>=0; k--) {
     /* ID of the partner in crime in the comm */
     partner = sub_rank ^ ((int) pow(2,k));
+	printf("Chunk size %d ######\n", chunk );
 
     switch (opt) {
       	/* Sub master determine the pivot */
       	case 1: {
       		if (sub_rank == 0){
-      			pvt = median(local_arr, chunk);
+				printf("Pivot before operation ****** %d\n", pivot);
+				print_arr(local_arr, chunk);
+      			//pvt = median(local_arr, chunk);
+      			pivot = median(local_arr, chunk);
+    			printf("median is : %d-------\n", pivot);
       		}
 			break;
 		} 
@@ -124,6 +139,7 @@ int main(int argc, char *argv[]) {
 			MPI_Gather(&pvt, 1, MPI_INT, pvt_arr, 1, MPI_INT, 0, n_comm);
 			if (sub_rank == 0) {
 				pvt = median(pvt_arr, sub_size);
+    			printf("median is : %d-------\n", pvt);
 			}
 			break;
 		}
@@ -135,19 +151,22 @@ int main(int argc, char *argv[]) {
 			if (sub_rank == 0) {
 				pvt = mean(pvt_arr, sub_size);
 			}
+    		printf("median is : %d-------\n", pvt);
 			break;
 		}
 
     }
+	printf("Rank %d has pivot %d-------\n", rank, pivot);
 
     /* Broadcast to sub slaves */
-    MPI_Bcast(&pvt, 1, MPI_INT, 0, n_comm);
+    MPI_Bcast(&pivot, 1, MPI_INT, 0, n_comm);
 
     /* ----------------------------------------------------------------- */
     MPI_Barrier(n_comm);
     
     /* Splitting local arr */
-    pos = parti(local_arr, chunk, pvt);
+    //pos = parti(local_arr, chunk, pvt);
+    pos = parti(local_arr, chunk, pivot);
     right = chunk - pos;
     lo = malloc(sizeof(int) * pos);
     hi = malloc(sizeof(int) * right);
@@ -179,8 +198,8 @@ int main(int argc, char *argv[]) {
       chunk = right + package_size; 
       local_arr = merge(hi, right, tmp, package_size);
     }
-	//printf("Local array at %d --------------\n", rank);
-	//print_arr(local_arr, chunk);
+	printf("Local array at %d --------------\n", rank);
+	print_arr(local_arr, chunk);
 
     MPI_Barrier(n_comm);
 //	printf("Number items in rank %d is %d----------------\n", rank, chunk);
