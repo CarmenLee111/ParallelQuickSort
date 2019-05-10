@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
   int color;                   
   double starttime, t;
   int* arr2;                    /* copy of the array for later comparison */
+  int pad;                      /* length of padding */
 
   /* Initialize MPI */
   MPI_Init(&argc, &argv);       
@@ -57,12 +58,17 @@ int main(int argc, char *argv[]) {
 
   if (rank == 0) {
     /* Loading the input file into l */
-    n = load_input(&arr, inputfile);      /* return length of the arr to be sorted */
-    arr2 = malloc(sizeof(int)*n);
+    n = load_input(&arr2, inputfile);      /* return length of the arr to be sorted */
+	pad = n%size;
+    arr = malloc(sizeof(int)*(n+pad));
     for (i=0; i<n; i++) {
-      arr2[i] = arr[i];
+      arr[i] = arr2[i];
     }
-    quicksort(arr2, 0, n-1);
+	for (i=n; i<n+pad; i++) {
+	  arr[i] = 0;
+	}
+	free(arr2);
+  //  quicksort(arr2, 0, n-1);
 
   }
 
@@ -72,9 +78,14 @@ int main(int argc, char *argv[]) {
   MPI_Barrier(MPI_COMM_WORLD);
 
   /* Send data to local arrays and reorder */
-  chunk  = n/size; 
+  chunk  = ceil(n/size); 
+  printf("The chunk for Rank %d is %d ------------\n", rank, chunk);
   int *local_arr = malloc(sizeof(int)*chunk);
   MPI_Scatter(arr, chunk, MPI_INT, local_arr, chunk, MPI_INT, 0, MPI_COMM_WORLD);
+  /* remove padding */
+  if (rank == size-1) {
+	chunk = chunk - pad;
+  }
   qsort(local_arr, chunk, sizeof(int), cmpfunc);
   
   /* Bunch of local variables */
@@ -168,8 +179,11 @@ int main(int argc, char *argv[]) {
       chunk = right + package_size; 
       local_arr = merge(hi, right, tmp, package_size);
     }
+	//printf("Local array at %d --------------\n", rank);
+	//print_arr(local_arr, chunk);
 
     MPI_Barrier(n_comm);
+//	printf("Number items in rank %d is %d----------------\n", rank, chunk);
 
     /* Splitting the comm for the next iternation */
     color = sub_rank / (pow(2, k));
@@ -203,9 +217,12 @@ int main(int argc, char *argv[]) {
   if (rank==0) {
     /* WALL TIME */
     printf("%f\n", t);
-    
+	printf("Gather results: ---------- \n");
+	print_arr(rev_counts, size);
+	print_arr(rev_displs, size);
+
     /* Write to output (ommitted for measuring time) */ 
-    //write_output(n, arr, outputfile);
+    write_output(n, arr, outputfile);
     free(arr);
   }
 
