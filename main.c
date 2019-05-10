@@ -9,9 +9,10 @@ void write_output(int n, int* l, char* filename);
 void swap(int* x, int* y);
 int partition (int arr[], int lo, int hi);
 void quicksort(int *arr, int lo, int hi);
-int parti (int arr[], int n, int pvt);
-long long median (int arr[], int n);
-long long mean (long long arr[], int n);
+int parti (int arr[], int n, long long int pvt);
+long long int median (int arr[], int n);
+long long int medianLong (long long int arr[], int n);
+long long int mean (long long int arr[], int n);
 int cmpfunc (const void * a, const void * b);
 int * merge(int *v1, int n1, int *v2, int n2);
 void print_arr(int* arr, int n);
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
   int d;                        /* dimension of the hypercube */
   int chunk;                    /* Amount of work each processor will do */
   int* arr;
-  long long pvt = 0;                     
+  long long int pvt = 0;                     
   int color;                   
   double starttime, t;
   int* arr2;                    /* copy of the array for later comparison */
@@ -59,18 +60,19 @@ int main(int argc, char *argv[]) {
   if (rank == 0) {
     /* Loading the input file into l */
     n = load_input(&arr2, inputfile);      /* return length of the arr to be sorted */
-	pad = (n%size != 0) ? (size - n%size): n/size;
+	  pad = (n%size != 0) ? (size - n%size) : 0; //0  n/size
+    printf("init %d %d %d\n",size, n, pad);
     arr = malloc(sizeof(int)*(n+pad));
     for (i=0; i<n; i++) {
       arr[i] = arr2[i];
     }
-	for (i=n; i<n+pad; i++) {
-	  arr[i] = 0;
-	}
-	free(arr2);
-  //  quicksort(arr2, 0, n-1);
+	  for (i=n; i<n+pad; i++) {
+	    arr[i] = 0;
+	  }
+	  free(arr2);
+    //  quicksort(arr2, 0, n-1);
     chunk  = (n+pad)/size; 
-	MPI_Isend(&pad, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD, &request);
+	  MPI_Isend(&pad, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD, &request);
   }
 
   //chunk  = (n+pad)/size; 
@@ -90,7 +92,7 @@ int main(int argc, char *argv[]) {
   /* remove padding */
   if (rank == size-1) {
     MPI_Irecv(&pad, 1 , MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
-	chunk -=  pad;
+	chunk -= pad;
 	
   }
   qsort(local_arr, chunk, sizeof(int), cmpfunc);
@@ -117,36 +119,39 @@ int main(int argc, char *argv[]) {
     partner = sub_rank ^ ((int) pow(2,k));
 	//printf("Chunk size %d ######\n", chunk );
 
+  //printf("rank %d %d ------------------------------\n", rank, chunk);
+  //print_arr(local_arr, chunk);
+
     switch (opt) {
       	/* Sub master determine the pivot */
       	case 1: {
       		if (sub_rank == 0){
 				//printf("Pivot before operation ****** %d\n", pivot);
       			pvt = median(local_arr, chunk);
-    			printf("median is : %d-------\n", pvt);
+    			  printf("median is : %lld-------\n", pvt);
       		}
 			break;
 		} 
 		/* Median of medians */
 		case 2: {
 			pvt = median(local_arr, chunk);
-			int pvt_arr[sub_size];
+			long long int pvt_arr[sub_size];
 			MPI_Gather(&pvt, 1, MPI_LONG_LONG_INT, pvt_arr, 1, MPI_LONG_LONG_INT, 0, n_comm);
 			if (sub_rank == 0) {
-				pvt = median(pvt_arr, sub_size);
-    			printf("median is : %d-------\n", pvt);
+				pvt = medianLong(pvt_arr, sub_size);
+    			printf("median is : %lld-------\n", pvt);
 			}
 			break;
 		}
 		/* Mean of medians */
 		case 3: {
 			pvt = median(local_arr, chunk);
-			long long pvt_arr[sub_size];
+			long long int pvt_arr[sub_size];
 			MPI_Gather(&pvt, 1, MPI_LONG_LONG_INT, pvt_arr, 1, MPI_LONG_LONG_INT, 0, n_comm);
 			if (sub_rank == 0) {
 				pvt = mean(pvt_arr, sub_size);
 			}
-    		printf("median is : %d-------\n", pvt);
+    		printf("median is : %lld-------\n", pvt);
 			break;
 		}
 
@@ -154,7 +159,7 @@ int main(int argc, char *argv[]) {
 	//printf("Rank %d has pivot %d-------\n", rank, pvt);
 
     /* Broadcast to sub slaves */
-    MPI_Bcast(&pvt, 1, MPI_INT, 0, n_comm);
+    MPI_Bcast(&pvt, 1, MPI_LONG_LONG_INT, 0, n_comm);
 
     /* ----------------------------------------------------------------- */
     MPI_Barrier(n_comm);
@@ -169,18 +174,37 @@ int main(int argc, char *argv[]) {
     for (i=0; i<right; i++) hi[i] = local_arr[pos+i];
 
     /* Sending the corrrect part */
+    MPI_Status status;
     if (sub_rank < partner) {
-        MPI_Isend(hi, right, MPI_INT, partner, 0, n_comm, &request);
+      //MPI_Isend(hi, right, MPI_INT, partner, 0, n_comm, &request);
+        printf("1 %d\n", rank);
+        MPI_Send(hi, right, MPI_INT, partner, 0, n_comm);
+        printf("2 %d\n", rank); 
+
+        MPI_Probe(partner, 0, n_comm, &status);  
+        MPI_Get_count(&status, MPI_INT, &package_size);
+        //MPI_Barrier(n_comm);
+        tmp = malloc(sizeof(int)*package_size);
+        MPI_Recv(tmp, package_size, MPI_INT, partner, 0, n_comm, &status);
     } else {
-        MPI_Isend(lo, pos, MPI_INT, partner, 0, n_comm, &request);
+        printf("rec %d\n", rank);
+        MPI_Probe(partner, 0, n_comm, &status);
+        printf("probed %d\n", rank);  
+        MPI_Get_count(&status, MPI_INT, &package_size);
+        //MPI_Barrier(n_comm);
+        tmp = malloc(sizeof(int)*package_size);
+        MPI_Recv(tmp, package_size, MPI_INT, partner, 0, n_comm, &status);
+
+        //MPI_Isend(lo, pos, MPI_INT, partner, 0, n_comm, &request);
+        MPI_Send(lo, pos, MPI_INT, partner, 0, n_comm);
     }
 
     /* Probing and receiving from partner in crime. */
-    MPI_Probe(partner, 0, n_comm, &status);  
-    MPI_Get_count(&status, MPI_INT, &package_size);
-    MPI_Barrier(n_comm);
-    tmp = malloc(sizeof(int)*package_size);
-    MPI_Irecv(tmp, package_size, MPI_INT, partner, 0, n_comm, &request);
+    //MPI_Probe(partner, 0, n_comm, &status);  
+    //MPI_Get_count(&status, MPI_INT, &package_size);
+    //MPI_Barrier(n_comm);
+    //tmp = malloc(sizeof(int)*package_size);
+    //MPI_Irecv(tmp, package_size, MPI_INT, partner, 0, n_comm, &request);
 
     /* ----------------------------------------------------------------- */
     MPI_Barrier(n_comm);
@@ -320,19 +344,30 @@ void quicksort(int *arr, int lo, int hi) {
  * Or n if all elements are less than the pivot
  * arr is sorted to begin with
  */
-int parti (int arr[], int n, int pvt) {
+int parti (int arr[], int n, long long int pvt) {
   int i;
   if (arr == NULL) return n;
   // n - the length of arr
   for (i=0; i<n; i++) {
-    if (arr[i]>=pvt) return i;
+    if (arr[i]>=(int)(pvt)) return i;
   }
   return n;    // all elements are less than the pivot
 }
 
 
 /* Return the median of a sorted arr of length n */
-long long median (int arr[], int n) {
+long long int median (int arr[], int n) {
+  
+  if (n==0) return 0;  /* set zero as the pivot if encounters an empty set */
+  if (n%2==0) {
+    return ( (long long) arr[n/2-1] + (long long) arr[n/2]) / 2;
+  } else {
+    return (long long) arr[n/2];
+  }
+}
+
+/* Return the median of a sorted arr of length n */
+long long int medianLong (long long int arr[], int n) {
   
   if (n==0) return 0;  /* set zero as the pivot if encounters an empty set */
   if (n%2==0) {
@@ -343,9 +378,9 @@ long long median (int arr[], int n) {
 }
 
 /* Return the mean of an array of length n */
-long long mean (long long arr[], int n) {
+long long int mean (long long int arr[], int n) {
 	if (n==0) return 0;   /* Set zero as mean if encounters an empty set */
-	long long sum;
+	long long int sum;
 	int i;
 	for (i=0; i<n; i++) {
 		sum += (long long) arr[i];
