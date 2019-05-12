@@ -1,0 +1,45 @@
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 1
+31.513006
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 1
+31.373443
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 1
+32.333178
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 2
+31.101515
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 2
+31.885081
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 2
+31.927412
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 3
+31.436291
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 3
+31.216920
+-p node -N 1 -n 2
+The executable: quicksort
+input file name input125000000.txt
+pivot option 3
+31.696089
