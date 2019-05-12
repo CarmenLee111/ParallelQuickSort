@@ -1,0 +1,48 @@
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 1
+17.691703
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 2
+18.152814
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 3
+17.626613
+-p node -N 8 -n 32
+input file name input250000000.txt
+pivot option 1
+36.814370
+-p node -N 8 -n 32
+input file name input250000000.txt
+pivot option 2
+36.672030
+-p node -N 8 -n 32
+input file name input250000000.txt
+pivot option 3
+36.707007
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 1
+69.330896
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 2
+69.494297
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 3
+69.681249
+-p node -N 8 -n 32
+input file name input1000000000.txt
+pivot option 1
+140.614940
+-p node -N 8 -n 32
+input file name input1000000000.txt
+pivot option 2
+141.083187
+-p node -N 8 -n 32
+input file name input1000000000.txt
+pivot option 3
+139.557653

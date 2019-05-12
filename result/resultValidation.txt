@@ -1,0 +1,92 @@
+Validation passed for all test files:
+With blocking send and receive.
+-p node -N 1 -n 4
+input file name input4.txt
+pivot option 1
+0.003331
+n: 4
+-p node -N 1 -n 4
+input file name input4.txt
+pivot option 2
+0.001571
+n: 4
+-p node -N 1 -n 4
+input file name input4.txt
+pivot option 3
+0.001498
+n: 4
+-p node -N 1 -n 4
+input file name input10.txt
+pivot option 1
+0.001876
+n: 10
+-p node -N 1 -n 4
+input file name input10.txt
+pivot option 2
+0.001531
+n: 10
+-p node -N 1 -n 4
+input file name input10.txt
+pivot option 3
+0.001551
+n: 10
+-p node -N 1 -n 4
+input file name input93.txt
+pivot option 1
+0.002029
+n: 93
+-p node -N 1 -n 4
+input file name input93.txt
+pivot option 2
+0.001545
+n: 93
+-p node -N 1 -n 4
+input file name input93.txt
+pivot option 3
+0.001553
+n: 93
+-p node -N 1 -n 4
+input file name backwards4.txt
+pivot option 1
+0.002122
+n: 4
+-p node -N 1 -n 4
+input file name backwards4.txt
+pivot option 2
+0.001470
+n: 4
+-p node -N 1 -n 4
+input file name backwards4.txt
+pivot option 3
+0.001630
+n: 4
+-p node -N 1 -n 4
+input file name backwards10.txt
+pivot option 1
+0.002052
+n: 10
+-p node -N 1 -n 4
+input file name backwards10.txt
+pivot option 2
+0.001513
+n: 10
+-p node -N 1 -n 4
+input file name backwards10.txt
+pivot option 3
+0.001563
+n: 10
+-p node -N 1 -n 4
+input file name backwards93.txt
+pivot option 1
+0.002071
+n: 93
+-p node -N 1 -n 4
+input file name backwards93.txt
+pivot option 2
+0.001432
+n: 93
+-p node -N 1 -n 4
+input file name backwards93.txt
+pivot option 3
+0.001646
+n: 93

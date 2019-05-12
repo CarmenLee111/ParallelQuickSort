@@ -1,0 +1,12 @@
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 1
+19.439062
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 2
+19.297660
+-p node -N 8 -n 32
+input file name input125000000.txt
+pivot option 3
+19.315781

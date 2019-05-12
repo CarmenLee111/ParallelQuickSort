@@ -1,0 +1,180 @@
+number of cores: 2
+input file: input20million.txt
+Pivot option 1
+9.011115
+number of cores: 2
+input file: input20million.txt
+Pivot option 1
+8.762303
+number of cores: 2
+input file: input20million.txt
+Pivot option 1
+8.755756
+number of cores: 2
+input file: input20million.txt
+Pivot option 2
+8.858492
+number of cores: 2
+input file: input20million.txt
+Pivot option 2
+8.773528
+number of cores: 2
+input file: input20million.txt
+Pivot option 2
+8.961863
+number of cores: 2
+input file: input20million.txt
+Pivot option 3
+8.950288
+number of cores: 2
+input file: input20million.txt
+Pivot option 3
+8.921908
+number of cores: 2
+input file: input20million.txt
+Pivot option 3
+8.879143
+number of cores: 4
+input file: input20million.txt
+Pivot option 1
+7.316846
+number of cores: 4
+input file: input20million.txt
+Pivot option 1
+7.239900
+number of cores: 4
+input file: input20million.txt
+Pivot option 1
+7.229277
+number of cores: 4
+input file: input20million.txt
+Pivot option 2
+7.249391
+number of cores: 4
+input file: input20million.txt
+Pivot option 2
+7.282567
+number of cores: 4
+input file: input20million.txt
+Pivot option 2
+7.244499
+number of cores: 4
+input file: input20million.txt
+Pivot option 3
+7.560525
+number of cores: 4
+input file: input20million.txt
+Pivot option 3
+7.603679
+number of cores: 4
+input file: input20million.txt
+Pivot option 3
+7.534907
+number of cores: 8
+input file: input20million.txt
+Pivot option 1
+6.688759
+number of cores: 8
+input file: input20million.txt
+Pivot option 1
+6.647854
+number of cores: 8
+input file: input20million.txt
+Pivot option 1
+6.511994
+number of cores: 8
+input file: input20million.txt
+Pivot option 2
+6.535111
+number of cores: 8
+input file: input20million.txt
+Pivot option 2
+6.629647
+number of cores: 8
+input file: input20million.txt
+Pivot option 2
+6.682448
+number of cores: 8
+input file: input20million.txt
+Pivot option 3
+7.245609
+number of cores: 8
+input file: input20million.txt
+Pivot option 3
+7.123980
+number of cores: 8
+input file: input20million.txt
+Pivot option 3
+7.094951
+number of cores: 16
+input file: input20million.txt
+Pivot option 1
+6.340204
+number of cores: 16
+input file: input20million.txt
+Pivot option 1
+6.332269
+number of cores: 16
+input file: input20million.txt
+Pivot option 1
+6.414992
+number of cores: 16
+input file: input20million.txt
+Pivot option 2
+6.336580
+number of cores: 16
+input file: input20million.txt
+Pivot option 2
+6.311429
+number of cores: 16
+input file: input20million.txt
+Pivot option 2
+6.357574
+number of cores: 16
+input file: input20million.txt
+Pivot option 3
+6.899044
+number of cores: 16
+input file: input20million.txt
+Pivot option 3
+6.947470
+number of cores: 16
+input file: input20million.txt
+Pivot option 3
+6.925760
+number of cores: 32
+input file: input20million.txt
+Pivot option 1
+7.699612
+number of cores: 32
+input file: input20million.txt
+Pivot option 1
+7.518703
+number of cores: 32
+input file: input20million.txt
+Pivot option 1
+7.498789
+number of cores: 32
+input file: input20million.txt
+Pivot option 2
+7.636621
+number of cores: 32
+input file: input20million.txt
+Pivot option 2
+7.189654
+number of cores: 32
+input file: input20million.txt
+Pivot option 2
+6.873310
+number of cores: 32
+input file: input20million.txt
+Pivot option 3
+13.670551
+number of cores: 32
+input file: input20million.txt
+Pivot option 3
+11.483837
+number of cores: 32
+input file: input20million.txt
+Pivot option 3
+8.297415

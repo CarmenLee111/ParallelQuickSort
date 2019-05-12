@@ -1,0 +1,135 @@
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 1
+25.750821
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 1
+25.048383
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 1
+24.939008
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 2
+25.104859
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 2
+25.012878
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 2
+24.970920
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 3
+24.878464
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 3
+24.858283
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input125000000.txt
+pivot option 3
+24.931838
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 1
+45.918111
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 1
+44.912122
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 1
+44.499122
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 2
+44.768211
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 2
+44.719772
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 2
+44.587481
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 3
+44.838872
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 3
+44.769130
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input250000000.txt
+pivot option 3
+44.806848
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 1
+86.713134
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 1
+84.032981
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 1
+87.321874
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 2
+84.165871
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 2
+84.269561
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 2
+84.357935
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 3
+84.160715
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 3
+84.119244
+-p node -N 13 -n 256
+The executable: qsortIsend
+input file name input500000000.txt
+pivot option 3
+84.072735

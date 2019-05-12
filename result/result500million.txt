@@ -1,0 +1,47 @@
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 1
+73.764498
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 1
+69.942088
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 1
+69.330896
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 2
+70.835878
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 2
+69.494297
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 2
+70.047342
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 3
+69.910113
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 3
+69.681249
+-p node -N 8 -n 32
+input file name input500000000.txt
+pivot option 3
+slurmstepd: error: *** JOB 8734233 ON r99 CANCELLED AT 2019-05-12T11:20:01 DUE TO TIME LIMIT ***
+--------------------------------------------------------------------------
+ORTE has lost communication with a remote daemon.
+
+  HNP daemon   : [[54785,0],0] on node r99
+  Remote daemon: [[54785,0],1] on node r105
+
+This is usually due to either a failure of the TCP network
+connection to the node, or possibly an internal failure of
+the daemon itself. We cannot recover from this failure, and
+therefore will terminate the job.
+--------------------------------------------------------------------------

@@ -1,0 +1,72 @@
+input file name input4.txt
+pivot option 1
+0.001390
+n: 4
+input file name input4.txt
+pivot option 2
+0.001144
+n: 4
+input file name input4.txt
+pivot option 3
+0.001267
+n: 4
+input file name input10.txt
+pivot option 1
+0.001328
+n: 10
+input file name input10.txt
+pivot option 2
+0.001065
+n: 10
+input file name input10.txt
+pivot option 3
+0.001224
+n: 10
+input file name input93.txt
+pivot option 1
+0.001318
+n: 93
+input file name input93.txt
+pivot option 2
+0.001052
+n: 93
+input file name input93.txt
+pivot option 3
+0.001225
+n: 93
+input file name backwards4.txt
+pivot option 1
+0.001942
+n: 4
+input file name backwards4.txt
+pivot option 2
+0.001080
+n: 4
+input file name backwards4.txt
+pivot option 3
+0.070562
+n: 4
+input file name backwards10.txt
+pivot option 1
+0.001371
+n: 10
+input file name backwards10.txt
+pivot option 2
+0.001076
+n: 10
+input file name backwards10.txt
+pivot option 3
+0.001168
+n: 10
+input file name backwards93.txt
+pivot option 1
+0.002021
+n: 93
+input file name backwards93.txt
+pivot option 2
+0.001072
+n: 93
+input file name backwards93.txt
+pivot option 3
+0.001515
+n: 93
