@@ -43,7 +43,6 @@ int main(int argc, char *argv[]) {
 
   /* Initialize MPI */
   MPI_Init(&argc, &argv);       
-  starttime = MPI_Wtime();
 
   /* Global IDs */
   MPI_Comm_size(MPI_COMM_WORLD, &size);     
@@ -59,20 +58,26 @@ int main(int argc, char *argv[]) {
 
   if (rank == 0) {
     /* Loading the input file into l */
-    n = load_input(&arr2, inputfile);      /* return length of the arr to be sorted */
-	  pad = (n%size != 0) ? (size - n%size) : 0; //0  n/size
-    arr = malloc(sizeof(int)*(n+pad));
-    for (i=0; i<n; i++) {
-      arr[i] = arr2[i];
-    }
-	  for (i=n; i<n+pad; i++) {
-	    arr[i] = 0;
-	  }
-	  free(arr2);
+    n = load_input(&arr, inputfile);      /* return length of the arr to be sorted */
+  }
+  
+  starttime = MPI_Wtime();
+
+  if (rank == 0 ) {
+	pad = (n%size != 0) ? (size - n%size) : 0; 
+    //arr = malloc(sizeof(int)*(n+pad));
+    //for (i=0; i<n; i++) {
+    //  arr[i] = arr2[i];
+    //}
+	//  for (i=n; i<n+pad; i++) {
+	//    arr[i] = 0;
+	//  }
+	//  free(arr2);
     chunk  = (n+pad)/size; 
-	  MPI_Isend(&pad, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD, &request);
+	MPI_Isend(&pad, 1, MPI_INT, size-1, 0, MPI_COMM_WORLD, &request);
   }
 
+  if (rank == size-1) MPI_Irecv(&pad, 1 , MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
 
   /* Telling the global slaves how large (n) the array is */
   MPI_Bcast(&chunk, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -85,11 +90,8 @@ int main(int argc, char *argv[]) {
   /* ----------------------------------------------------------------- */
   MPI_Barrier(MPI_COMM_WORLD);
   /* remove padding */
-  if (rank == size-1) {
-    MPI_Irecv(&pad, 1 , MPI_INT, 0, 0, MPI_COMM_WORLD, &request);
-	chunk -= pad;
+  if (rank == size-1) chunk -= pad;
 	
-  }
   qsort(local_arr, chunk, sizeof(int), cmpfunc);
   
   /* Bunch of local variables */
