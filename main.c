@@ -198,9 +198,9 @@ int main(int argc, char *argv[]) {
     MPI_Comm_split(n_comm, color, sub_rank, &n_comm);
     MPI_Comm_rank(n_comm, &sub_rank);
     MPI_Comm_size(n_comm, &sub_size);
-    free(tmp);
-    free(lo);
-    free(hi);
+    //free(tmp);
+    //free(lo);
+    //free(hi);
   }
 
   /* Gather the results */
